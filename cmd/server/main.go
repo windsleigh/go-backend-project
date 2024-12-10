@@ -13,10 +13,13 @@ import (
 func initializeRoutes() {
 	http.Handle("/", handlers.LoggingMiddleware(http.HandlerFunc(handlers.HelloHandler)))
 	http.Handle("/health", handlers.LoggingMiddleware(http.HandlerFunc(handlers.HealthHandler)))
-	http.Handle("/users", handlers.LoggingMiddleware(http.HandlerFunc(handlers.GetUsersHandler)))
-	http.Handle("/users/create", handlers.LoggingMiddleware(http.HandlerFunc(handlers.CreateUserHandler)))
-	http.Handle("/users/update", handlers.LoggingMiddleware(http.HandlerFunc(handlers.UpdateUserHandler)))
-	http.Handle("/users/delete", handlers.LoggingMiddleware(http.HandlerFunc(handlers.DeleteUserHandler)))
+	http.Handle("/login", handlers.LoggingMiddleware(http.HandlerFunc(handlers.LoginHandler)))
+
+	// Protected routes
+	http.Handle("/users", handlers.LoggingMiddleware(handlers.AuthMiddleware(http.HandlerFunc(handlers.GetUsersHandler))))
+	http.Handle("/users/create", handlers.LoggingMiddleware(handlers.AuthMiddleware(http.HandlerFunc(handlers.CreateUserHandler))))
+	http.Handle("/users/update", handlers.LoggingMiddleware(handlers.AuthMiddleware(http.HandlerFunc(handlers.UpdateUserHandler))))
+	http.Handle("/users/delete", handlers.LoggingMiddleware(handlers.AuthMiddleware(http.HandlerFunc(handlers.DeleteUserHandler))))
 }
 
 func startServer() {
