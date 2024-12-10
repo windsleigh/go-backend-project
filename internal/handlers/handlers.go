@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -10,7 +11,8 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Hello, World!")
 }
 
-// HealthHandler handles requests to the /health path.
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Server is healthy!")
+	response := map[string]string{"status": "healthy"}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
