@@ -15,6 +15,8 @@ func initializeRoutes() {
 	http.Handle("/health", handlers.LoggingMiddleware(http.HandlerFunc(handlers.HealthHandler)))
 	http.Handle("/users", handlers.LoggingMiddleware(http.HandlerFunc(handlers.GetUsersHandler)))
 	http.Handle("/users/create", handlers.LoggingMiddleware(http.HandlerFunc(handlers.CreateUserHandler)))
+	http.Handle("/users/update", handlers.LoggingMiddleware(http.HandlerFunc(handlers.UpdateUserHandler)))
+	http.Handle("/users/delete", handlers.LoggingMiddleware(http.HandlerFunc(handlers.DeleteUserHandler)))
 }
 
 func startServer() {
