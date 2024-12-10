@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 // HelloHandler handles requests to the root path.
@@ -28,7 +29,18 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 // LoggingMiddleware logs incoming requests.
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Incoming request: %s %s", r.Method, r.URL.Path)
+		logLevel := os.Getenv("LOG_LEVEL")
+
+		// Log only if log level is INFO or DEBUG
+		if logLevel == "INFO" || logLevel == "DEBUG" {
+			log.Printf("[%s] %s %s", r.Method, r.URL.Path, r.RemoteAddr)
+		}
+
+		// Log additional details for DEBUG level
+		if logLevel == "DEBUG" {
+			log.Printf("Headers: %v", r.Header)
+		}
+
 		next.ServeHTTP(w, r) // Call the next handler
 	})
 }
