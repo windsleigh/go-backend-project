@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 )
 
@@ -43,4 +44,36 @@ func GetUsers(db *sql.DB) ([]User, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+// UpdateUser updates an existing user's name or email.
+func UpdateUser(db *sql.DB, id int, name, email string) error {
+	query := "UPDATE users SET name = ?, email = ? WHERE id = ?"
+	result, err := db.Exec(query, name, email, id)
+	if err != nil {
+		log.Printf("Error updating user: %s", err)
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no user found with the given ID")
+	}
+	return nil
+}
+
+// DeleteUser removes a user from the database by ID.
+func DeleteUser(db *sql.DB, id int) error {
+	query := "DELETE FROM users WHERE id = ?"
+	result, err := db.Exec(query, id)
+	if err != nil {
+		log.Printf("Error deleting user: %s", err)
+		return err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+	if rowsAffected == 0 {
+		return errors.New("no user found with the given ID")
+	}
+	return nil
 }
