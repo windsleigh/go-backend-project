@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -33,4 +34,20 @@ func Connect() (*sql.DB, error) {
 
 	log.Println("Database connected successfully!")
 	return db, nil
+}
+
+// InitializeDatabase runs an initialization SQL script
+func InitializeDatabase(db *sql.DB) error {
+	script, err := ioutil.ReadFile("scripts/init.sql")
+	if err != nil {
+		return fmt.Errorf("failed to read init.sql: %w", err)
+	}
+
+	_, err = db.Exec(string(script))
+	if err != nil {
+		return fmt.Errorf("failed to execute init.sql: %w", err)
+	}
+
+	log.Println("Database initialized successfully!")
+	return nil
 }

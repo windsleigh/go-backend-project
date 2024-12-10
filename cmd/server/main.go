@@ -28,18 +28,23 @@ func startServer() {
 }
 
 func main() {
-	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using default values")
 	}
 
-	// Initialize the database connection
-	_, err := db.Connect()
+	dbConn, err := db.Connect()
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %s", err)
 	}
+	defer dbConn.Close()
 
-	// Initialize routes and start the server
+	// Run the SQL initialization script
+	if err := db.InitializeDatabase(dbConn); err != nil {
+		log.Fatalf("Failed to initialize the database: %s", err)
+	}
+
+	handlers.SetDatabase(dbConn)
+
 	initializeRoutes()
 	startServer()
 }

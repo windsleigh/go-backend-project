@@ -1,12 +1,20 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 )
+
+var database *sql.DB // Global variable to hold the database connection
+
+// SetDatabase sets the database connection for handlers to use.
+func SetDatabase(dbConn *sql.DB) {
+	database = dbConn
+}
 
 // HelloHandler handles requests to the root path.
 func HelloHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,6 +28,7 @@ func HelloHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// HealthHandler handles requests to check the server's health.
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"status": "healthy"}
 	w.Header().Set("Content-Type", "application/json")
