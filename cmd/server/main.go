@@ -2,22 +2,14 @@ package main
 
 import (
 	"fmt"
+	"go-backend-project/internal/handlers" // Import the handlers package
 	"net/http"
 )
 
-// helloHandler handles requests to the root path.
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, Refactored World!")
-}
-
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Server is healthy!")
-}
-
 // initializeRoutes sets up the routes for the server.
 func initializeRoutes() {
-	http.HandleFunc("/", helloHandler)
-	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/", handlers.HelloHandler)
+	http.HandleFunc("/health", handlers.HealthHandler)
 }
 
 // startServer starts the HTTP server.
