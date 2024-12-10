@@ -8,8 +8,8 @@ import (
 
 // initializeRoutes sets up the routes for the server.
 func initializeRoutes() {
-	http.HandleFunc("/", handlers.HelloHandler)
-	http.HandleFunc("/health", handlers.HealthHandler)
+	http.Handle("/", handlers.LoggingMiddleware(http.HandlerFunc(handlers.HelloHandler)))
+	http.Handle("/health", handlers.LoggingMiddleware(http.HandlerFunc(handlers.HealthHandler)))
 }
 
 // startServer starts the HTTP server.

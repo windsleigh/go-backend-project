@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -22,4 +23,12 @@ func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"status": "healthy"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+// LoggingMiddleware logs incoming requests.
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Incoming request: %s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r) // Call the next handler
+	})
 }
