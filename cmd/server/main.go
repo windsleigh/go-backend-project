@@ -5,9 +5,9 @@ import (
 	"go-backend-project/internal/handlers"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 func initializeRoutes() {
@@ -23,13 +23,18 @@ func initializeRoutes() {
 }
 
 func startServer() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	port := ":8080"
 
-	log.Printf("Server is running at http://localhost:%s\n", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	// Wrap all routes with CORS middleware
+	handler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
+	}).Handler(http.DefaultServeMux)
+
+	log.Printf("Server is running at http://localhost%s\n", port)
+	if err := http.ListenAndServe(port, handler); err != nil {
 		log.Fatalf("Error starting server: %s", err)
 	}
 }
